@@ -1,9 +1,11 @@
 var stage, queue;
 
-var faces = ['garlic', 'onion', 'pepper', 'potato', 'spinach', 'tomato'];
+var faces = ['garlic', 'onion', 'pepper', 'potato', 'spinach', 'tomato',
+            'benelli', 'bullpup'];
 var cards = [];
 var cardsFlipped = [];
 var matches = 0;
+var difficulty = 0;
 
 function preload() {
     queue = new createjs.LoadQueue();
@@ -23,10 +25,25 @@ function preload() {
 function init() {
     stage = new createjs.Stage(document.getElementById('canvas'));
     startGame();
+    shuffleFaces();
     buildCards();
     shuffleCards();
     dealCards();
 }
+
+function shuffleFaces(){
+    var i, face, randomIndex;
+    // cards.length = 4;
+    var l = faces.length;
+    var shuffledFaces = [];
+    for (i = 0; i < l; i++) {
+        randomIndex = Math.floor(Math.random() * faces.length);
+        shuffledFaces.push(faces[randomIndex]);
+        faces.splice(randomIndex, 1);
+    }
+    faces = faces.concat(shuffledFaces);
+}
+
 function buildCards() {
     var i, card, card2, bmp, label, face;
     for (i = 0; i < faces.length; i++) {
@@ -58,6 +75,7 @@ function buildCards() {
 }
 function shuffleCards() {
     var i, card, randomIndex;
+    cards.length = 4;
     var l = cards.length;
     var shuffledCards = [];
     for (i = 0; i < l; i++) {
@@ -111,6 +129,7 @@ function evalCardsFlipped() {
     else {
         setTimeout(resetFlippedCards, 1000);
     }
+    console.log(matches);
 }
 function resetFlippedCards() {
     cardsFlipped[0].mouseEnabled = cardsFlipped[1].mouseEnabled = true;
@@ -119,7 +138,7 @@ function resetFlippedCards() {
     cardsFlipped = [];
 }
 function evalGame() {
-    if (matches === faces.length) {
+    if (matches === cards.length / 2) {
         setTimeout(function () {
             alert('YOU WIN!')
         }, 300)
@@ -133,4 +152,6 @@ function startGame() {
     createjs.Ticker.addEventListener("tick", function (e) {
         stage.update();
     });
+    stage.canvas.width = window.innerWidth;
+    stage.canvas.height = window.innerHeight; 
 }
